@@ -1,0 +1,14 @@
+class User:
+    total = 0
+
+    def __init__(self, nickname, password, age):
+        self.nickname = nickname
+        self.password = hash(password)
+        self.age = age
+        self.total += 1
+
+    def __str__(self):
+        return self.nickname
+
+    def __eq__(self, other):
+        return self.nickname == other.nickname and self.password == other.password
