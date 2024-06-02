@@ -25,7 +25,7 @@ class UrTube:
                 del user_check
                 return
         del user_check
-        print(f'Пользователь не найден')
+        print(f'Неверное имя пользователя или пароль')
 
     def register(self, nickname, password, age):
         if len(self.users) > 0:
@@ -70,6 +70,8 @@ class UrTube:
         for i in range(len(self.videos)):
             if key_word.lower() in self.videos[i].title.lower():
                 titles_list.append(self.videos[i].title)
+        if len(titles_list) == 0:
+            return f'Видео не найдено'
         return titles_list
 
     def watch_video(self, title):
@@ -82,13 +84,16 @@ class UrTube:
                 print('Вам нет 18 лет, пожалуйста покиньте страницу')
                 return
             elif title == self.videos[i].title:
+                watch_finished = False
                 while self.videos[i].time_now < self.videos[i].duration:
                     sleep(1)
                     self.videos[i].time_now += 1
                     print(self.videos[i].time_now, end=" ")
                     if self.videos[i].time_now == self.videos[i].duration:
                         print('Конец видео')
-                self.videos[i].time_now = 0
+                        watch_finished = True
+                if watch_finished:
+                    self.videos[i].time_now = 0
                 return
         # print(f'Видео не найдено')
 
@@ -97,3 +102,6 @@ class UrTube:
             if item.title == self.videos[i].title:
                 return True
         return False
+
+    def __str__(self):
+        return f'Загружено видео: {UrTube.total_video}, пользователей: {User.total}'
