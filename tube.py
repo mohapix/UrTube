@@ -13,6 +13,9 @@ class UrTube:
         self.current_user = None
 
     def log_in(self, login, password):
+        if self.current_user and self.current_user.nickname == login:
+            # print(f'Вы уже вошли')
+            return
         user_check = User(login, password, False)
         for i in range(len(self.users)):
             if user_check == self.users[i]:
@@ -30,12 +33,14 @@ class UrTube:
                     print(f'Пользователь {nickname} уже существует')
                     return
         self.current_user = User(nickname, password, age)
+        User.total += 1
         self.users.append(self.current_user)
         # print(f'Пользователь {nickname} успешно зарегистрирован')
         # print(f'Все пользователи:\n{self.users}')
 
     def log_out(self):
         self.current_user = None
+        print('До свидания!')
 
     def add(self, *args):
         videos_to_add = [*args]
