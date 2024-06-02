@@ -20,6 +20,7 @@ class UrTube:
                 print(f'Привет, {self.current_user.nickname}')
                 del user_check
                 return
+        del user_check
         print(f'Пользователь не найден')
 
     def register(self, nickname, password, age):
