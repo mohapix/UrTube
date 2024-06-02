@@ -9,5 +9,8 @@ class User:
     def __str__(self):
         return self.nickname
 
+    def __repr__(self):
+        return self.nickname
+
     def __eq__(self, other):
         return self.nickname == other.nickname and self.password == other.password

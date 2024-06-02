@@ -6,6 +6,7 @@ class UrTube:
     """
 
     """
+    total_video = 0
 
     def __init__(self):
         self.users = []
@@ -50,18 +51,19 @@ class UrTube:
         while n >= 0:
             if len(self.videos) == 0:
                 self.videos.append(videos_to_add.pop(n))
+                UrTube.total_video += 1
                 n -= 1
                 continue
-            for i in range(len(self.videos)):
-                if videos_to_add[n].title == self.videos[i].title:
-                    videos_failed_to_add.append(videos_to_add.pop(n))
-                    break
+            if videos_to_add[n] in self:
+                videos_failed_to_add.append(videos_to_add.pop(n))
             n -= 1
         self.videos += videos_to_add
+        UrTube.total_video += len(videos_to_add)
 
         # print(f'Текущий список видео:\n{self.videos}')
         # if len(videos_failed_to_add):
         #     print(f'Не добавлены видео (уже есть):\n{videos_failed_to_add}')
+        # print()
 
     def get_videos(self, key_word):
         titles_list = []
@@ -88,5 +90,10 @@ class UrTube:
                         print('Конец видео')
                 self.videos[i].time_now = 0
                 return
-
         # print(f'Видео не найдено')
+
+    def __contains__(self, item):
+        for i in range(len(self.videos)):
+            if item.title == self.videos[i].title:
+                return True
+        return False
