@@ -75,14 +75,12 @@ class UrTube:
                 print('Вам нет 18 лет, пожалуйста покиньте страницу')
                 return
             elif title == self.videos[i].title:
-                # self.videos[i].time_now = 1
                 while self.videos[i].time_now < self.videos[i].duration:
                     sleep(1)
                     self.videos[i].time_now += 1
                     print(self.videos[i].time_now, end=" ")
                     if self.videos[i].time_now == self.videos[i].duration:
                         print('Конец видео')
-                    # self.videos[i].time_now += 1
                 self.videos[i].time_now = 0
                 return
 
