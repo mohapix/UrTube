@@ -57,8 +57,7 @@ class UrTube:
                     videos_failed_to_add.append(videos_to_add.pop(n))
                     break
             n -= 1
-        if len(videos_to_add) > 0:
-            self.videos += videos_to_add
+        self.videos += videos_to_add
 
         # print(f'Текущий список видео:\n{self.videos}')
         # if len(videos_failed_to_add):
