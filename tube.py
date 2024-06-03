@@ -38,9 +38,11 @@ class UrTube:
         self.users.append(self.current_user)
         print(f'Пользователь {nickname} успешно зарегистрирован')
 
-    def log_out(self):
+    def log_out(self, msg=True):
+        nickname = self.current_user.nickname
         self.current_user = None
-        print('До свидания!')
+        if msg:
+            print(f'До свидания, {nickname}')
 
     def add(self, *args):
         videos_to_add = [*args]
@@ -56,9 +58,9 @@ class UrTube:
             n -= 1
         if len(videos_to_add):
             videos_to_add.reverse()
-            print(f'Не добавлены видео (уже есть):\n{videos_to_add}\n')
+            print(f'Не удалось добавить видео:\n{videos_to_add}\n')
 
-    def del_video(self, *args):
+    def del_videos(self, *args):
         videos_to_del = [*args]
         videos_to_del.reverse()
         for i in range(len(videos_to_del)-1, -1, -1):
@@ -69,7 +71,7 @@ class UrTube:
                 videos_to_del.pop(i)
         if len(videos_to_del):
             videos_to_del.reverse()
-            print(f'Не удалось удалить (видео не найдено):\n{videos_to_del}\n')
+            print(f'Не удалось удалить видео:\n{videos_to_del}\n')
 
     def get_videos(self, key_word=None):
         titles_list = []
@@ -87,7 +89,10 @@ class UrTube:
         return f'Список всех видео:\n{self.get_videos()}\n'
 
     def user_access_check(self, i):
-        if self.videos[i].adult_mode and self.current_user.age < 18:
+        if not self.current_user:
+            print('Войдите в аккаунт, чтобы смотреть видео')
+            return False
+        elif self.videos[i].adult_mode and self.current_user.age < 18:
             print('Вам нет 18 лет, пожалуйста, покиньте страницу')
             return False
         return True

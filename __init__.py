@@ -3,9 +3,6 @@ from tube import UrTube
 
 
 def watch_video(title, time_start=0, speed=1):
-    if not ur.current_user:
-        print('Войдите в аккаунт, чтобы смотреть видео')
-        return
     index = ur.contains(title)
     if index or index == 0:
         if ur.user_access_check(index):
@@ -26,7 +23,7 @@ ur.add(v0, v3)
 ur.add(v0, v1, v2)
 
 # Удаление видео
-ur.del_video(v0, v3, 'Программирование на Python')
+ur.del_videos(v0, v3, 'Программирование на Python')
 
 # Проверка поиска
 print(ur.show_all_videos())
