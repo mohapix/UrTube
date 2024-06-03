@@ -90,6 +90,8 @@ class UrTube:
         return titles_list
 
     def show_all_videos(self):
+        if len(self.videos) == 0:
+            return f'Нет загруженных видео'
         return f'Список всех видео:\n{self.get_videos()}\n'
 
     def user_access_check(self, i):
