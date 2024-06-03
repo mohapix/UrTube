@@ -5,8 +5,7 @@ from tube import UrTube
 def watch_video(title, time_start=0, speed=1):
     index = ur.contains(title)
     if index or index == 0:
-        if ur.user_access_check(index):
-            ur.watch_video(index, time_start, speed)
+        ur.watch_video(index, time_start, speed)
         return
     print('Видео не найдено')
 

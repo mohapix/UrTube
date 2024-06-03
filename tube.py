@@ -104,7 +104,9 @@ class UrTube:
         return True
 
     def watch_video(self, i, time_now=0, speed=1):
-        if time_now >= self.videos[i].duration:
+        if not self.user_access_check(i):
+            return
+        elif time_now >= self.videos[i].duration:
             return
         match speed:
             case 0.25:
