@@ -1,5 +1,4 @@
 class User:
-    total = 0
 
     def __init__(self, nickname, password, age):
         self.nickname = nickname

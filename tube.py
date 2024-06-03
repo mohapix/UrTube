@@ -7,6 +7,8 @@ class UrTube:
 
     """
     total_video = 0
+    total_users = 0
+    uploaded_video_titles = []
 
     def __init__(self):
         self.users = []
@@ -34,7 +36,7 @@ class UrTube:
                     print(f'Пользователь {nickname} уже существует')
                     return
         self.current_user = User(nickname, password, age)
-        User.total += 1
+        UrTube.total_users += 1
         self.users.append(self.current_user)
         # print(f'Пользователь {nickname} успешно зарегистрирован')
         # print(f'Все пользователи:\n{self.users}')
@@ -51,6 +53,7 @@ class UrTube:
         while n >= 0:
             if len(self.videos) == 0:
                 self.videos.append(videos_to_add.pop(n))
+                UrTube.uploaded_video_titles.append(self.videos[-1].title)
                 UrTube.total_video += 1
                 n -= 1
                 continue
@@ -58,6 +61,8 @@ class UrTube:
                 videos_failed_to_add.append(videos_to_add.pop(n))
             n -= 1
         self.videos += videos_to_add
+        for i in range(len(videos_to_add)):
+            UrTube.uploaded_video_titles.append(videos_to_add[i].title)
         UrTube.total_video += len(videos_to_add)
 
         # print(f'Текущий список видео:\n{self.videos}')
@@ -97,6 +102,25 @@ class UrTube:
                 return
         # print(f'Видео не найдено')
 
+    def watch_video2(self, i, time_now):
+        if self.videos[i].adult_mode and self.current_user.age < 18:
+            print('Вам нет 18 лет, пожалуйста покиньте страницу')
+            return
+        if time_now >= self.videos[i].duration:
+            return
+        self.videos[i].time_now = time_now
+        watch_finished = False
+        while self.videos[i].time_now < self.videos[i].duration:
+            sleep(1)
+            self.videos[i].time_now += 1
+            print(self.videos[i].time_now, end=" ")
+            if self.videos[i].time_now == self.videos[i].duration:
+                print('Конец видео')
+                watch_finished = True
+        if watch_finished:
+            self.videos[i].time_now = 0
+        return
+
     def __contains__(self, item):
         for i in range(len(self.videos)):
             if item.title == self.videos[i].title:
@@ -104,4 +128,4 @@ class UrTube:
         return False
 
     def __str__(self):
-        return f'Загружено видео: {UrTube.total_video}, пользователей: {User.total}'
+        return f'Загружено видео: {UrTube.total_video}, пользователей: {UrTube.total_users}'
