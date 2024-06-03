@@ -82,8 +82,7 @@ class UrTube:
         for i in range(len(self.videos)):
             if not key_word:
                 titles_list.append(self.videos[i].title)
-                continue
-            if key_word.lower() in self.videos[i].title.lower():
+            elif key_word.lower() in self.videos[i].title.lower():
                 titles_list.append(self.videos[i].title)
         if len(titles_list) == 0:
             return f'Видео не найдено'
