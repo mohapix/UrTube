@@ -2,10 +2,6 @@ from video import Video
 from tube import UrTube
 
 
-# def watch_video(title):
-#     ur.watch_video(title)
-
-
 def watch_video(title, time_start=0, speed=1):
     if not ur.current_user:
         print('Войдите в аккаунт, чтобы смотреть видео')
