@@ -20,6 +20,8 @@ class UrTube:
             return
         for i in range(len(self.users)):
             if user_check == self.users[i]:
+                if self.current_user:
+                    self.log_out()
                 self.current_user = self.users[i]
                 print(f'Привет, {self.current_user.nickname}')
                 del user_check
@@ -33,6 +35,8 @@ class UrTube:
                 if nickname == self.users[i].nickname:
                     print(f'Пользователь {nickname} уже существует')
                     return
+        if self.current_user:
+            self.log_out()
         self.current_user = User(nickname, password, age)
         UrTube.total_users += 1
         self.users.append(self.current_user)
