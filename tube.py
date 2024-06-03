@@ -102,16 +102,30 @@ class UrTube:
                 return
         # print(f'Видео не найдено')
 
-    def watch_video2(self, i, time_now):
+    def watch_video2(self, i, time_now=0, speed=1):
         if self.videos[i].adult_mode and self.current_user.age < 18:
             print('Вам нет 18 лет, пожалуйста покиньте страницу')
             return
         if time_now >= self.videos[i].duration:
             return
+        match speed:
+            case 0.25:
+                sec = 4
+            case 0.5:
+                sec = 2
+            case 1:
+                sec = 1
+            case 2:
+                sec = 0.5
+            case 4:
+                sec = 0.25
+            case _:
+                sec = 1
         self.videos[i].time_now = time_now
         watch_finished = False
+        print(f"Смотрим видео: '{self.videos[i].title}' с {time_now} секунды со скоростью х{speed}")
         while self.videos[i].time_now < self.videos[i].duration:
-            sleep(1)
+            sleep(sec)
             self.videos[i].time_now += 1
             print(self.videos[i].time_now, end=" ")
             if self.videos[i].time_now == self.videos[i].duration:
