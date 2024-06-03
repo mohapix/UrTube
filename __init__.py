@@ -2,34 +2,38 @@ from video import Video
 from tube import UrTube
 
 
-def watch_video(title):
-    ur.watch_video(title)
+# def watch_video(title):
+#     ur.watch_video(title)
 
 
-def watch_video2(title, time_start=0, speed=1):
+def watch_video(title, time_start=0, speed=1):
     if not ur.current_user:
         print('Войдите в аккаунт, чтобы смотреть видео')
         return
-    videos = ur.get_videos(title)
-    if isinstance(videos, str):
-        print(videos)
+    index = ur.contains(title)
+    if index or index == 0:
+        if ur.user_access_check(index):
+            ur.watch_video(index, time_start, speed)
         return
-    for i in range(len(videos)):
-        if title == videos[i]:
-            index = UrTube.uploaded_video_titles.index(videos[i])
-            ur.watch_video2(index, time_start, speed)
-            return
     print('Видео не найдено')
 
 
 ur = UrTube()
+v0 = Video('Как сделать лучший пирог?', 30, adult_mode=True)
 v1 = Video('Лучший язык программирования 2024 года', 200)
 v2 = Video('Для чего девушкам парень программист?', 10, adult_mode=True)
+v3 = Video('Как сделать лучший пирог?', 100)
 
 # Добавление видео
 ur.add(v1, v2)
+ur.add(v0, v3)
+ur.add(v0, v1, v2)
+
+# Удаление видео
+ur.del_video(v0, v3, 'Программирование на Python')
 
 # Проверка поиска
+print(ur.show_all_videos())
 print(ur.get_videos('лучший'))
 print(ur.get_videos('ПРОГ'))
 
@@ -44,26 +48,13 @@ watch_video('Для чего девушкам парень программис�
 ur.register('vasya_pupkin', 'F8098FM8fjm9jmi', 55)
 print(ur.current_user)
 
+# Проверка логина и выхода
+ur.log_in('vasya_pupkin', 'F8098FM8fjm9jmi')
+ur.log_out()
+ur.log_in('urban_pythonist', 'iScX4vIJClb9YQavjAgF')
+
 # Попытка воспроизведения несуществующего видео
 watch_video('Лучший язык программирования 2024 года!')
 
-print('--------------------')
-# Повторный прогон исходных данных с использованием метода просмотра видео №2
-ur.log_out()
-
-# Проверка на вход пользователя и возрастное ограничение
-watch_video2('Для чего девушкам парень программист?')
-ur.log_in('vasya_pupkin', 'lolkekcheburek')
-watch_video2('Для чего девушкам парень программист?')
-ur.log_in('urban_pythonist', 'iScX4vIJClb9YQavjAgF')
-watch_video2('Для чего девушкам парень программист?')
-
-# Проверка входа в другой аккаунт
-ur.register('vasya_pupkin', 'F8098FM8fjm9jmi', 55)
-print(ur.current_user)
-
-# Попытка воспроизведения несуществующего видео
-watch_video2('Лучший язык программирования 2024 года!')
-
-# Попытка ускоренного воспроизведения файла не сначала
-watch_video2('Лучший язык программирования 2024 года', 170, 4)
+# Воспроизведение видео с заданных времени и скорости
+watch_video('Лучший язык программирования 2024 года', 180, 4)
