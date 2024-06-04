@@ -17,19 +17,19 @@ class UrTube:
         user_check = User(login, password, None)
         if self.current_user and user_check == self.current_user:
             return
-        for i in range(len(self.users)):
-            if user_check == self.users[i]:
+        for user in self.users:
+            if user_check == user:
                 if self.current_user:
                     self.log_out()
-                self.current_user = self.users[i]
+                self.current_user = user
                 print(f'Привет, {self.current_user.nickname}')
                 return
         print(f'Неверное имя пользователя или пароль')
 
     def register(self, nickname, password, age):
-        if len(self.users) > 0:
-            for i in range(len(self.users)):
-                if nickname == self.users[i].nickname:
+        if len(self.users):
+            for user in self.users:
+                if nickname == user.nickname:
                     print(f'Пользователь {nickname} уже существует')
                     return
         new_user = User(nickname, password, age)
@@ -49,60 +49,59 @@ class UrTube:
         videos_to_add.reverse()
         n = len(videos_to_add) - 1
         while n >= 0:
-            index = self.contains(videos_to_add[n])
-            if index or index == 0:
-                pass
-            else:
+            if not self.contains(videos_to_add[n]):
                 self.videos.append(videos_to_add.pop(n))
                 UrTube.total_video += 1
             n -= 1
         if len(videos_to_add):
             videos_to_add.reverse()
             print(f'Не удалось добавить видео:\n{videos_to_add}\n')
+            return
+        print('Все видео успешно добавлены')
 
     def del_videos(self, *args):
         videos_to_del = [*args]
         videos_to_del.reverse()
         for i in range(len(videos_to_del)-1, -1, -1):
-            index = self.contains(videos_to_del[i])
-            if index or index == 0:
-                self.videos.pop(index)
+            if self.contains(videos_to_del[i]):
+                self.videos.remove(videos_to_del.pop(i))
                 UrTube.total_video -= 1
-                videos_to_del.pop(i)
         if len(videos_to_del):
             videos_to_del.reverse()
             print(f'Не удалось удалить видео:\n{videos_to_del}\n')
+            return
+        print('Все видео успешно удалены')
 
     def get_videos(self, key_word=None):
         titles_list = []
         if not key_word:
             titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos))
             return titles_list
-        for i in range(len(self.videos)):
-            if key_word.lower() in self.videos[i].title.lower():
-                titles_list.append(self.videos[i].title)
-        if len(titles_list) == 0:
+        for video in self.videos:
+            if key_word.lower() in video.title.lower():
+                titles_list.append(video.title)
+        if not len(titles_list):
             return f'Видео не найдено'
         return titles_list
 
     def show_all_videos(self):
-        if len(self.videos) == 0:
+        if not len(self.videos):
             return f'Нет загруженных видео'
         return f'Список всех видео:\n{self.get_videos()}\n'
 
-    def user_access_check(self, i):
+    def user_access_check(self, video):
         if not self.current_user:
             print('Войдите в аккаунт, чтобы смотреть видео')
             return False
-        elif self.videos[i].adult_mode and self.current_user.age < 18:
+        elif video.adult_mode and self.current_user.age < 18:
             print('Вам нет 18 лет, пожалуйста, покиньте страницу')
             return False
         return True
 
-    def watch_video(self, i, time_now=0, speed=1):
-        if not self.user_access_check(i):
+    def watch_video(self, video, time_now=0, speed=1):
+        if not self.user_access_check(video):
             return
-        elif time_now >= self.videos[i].duration:
+        elif time_now >= video.duration:
             return
         match speed:
             case 0.25:
@@ -117,26 +116,26 @@ class UrTube:
                 sec = 0.25
             case _:
                 sec = 1
-        self.videos[i].time_now = time_now
+        video.time_now = time_now
         watch_finished = False
-        print(f"Запуск видео: '{self.videos[i].title}' с {time_now} секунды со скоростью х{speed}")
-        while self.videos[i].time_now < self.videos[i].duration:
+        print(f"Запуск видео: '{video.title}' с {time_now} секунды со скоростью х{speed}")
+        while video.time_now < video.duration:
             sleep(sec)
-            self.videos[i].time_now += 1
-            print(self.videos[i].time_now, end=" ")
-            if self.videos[i].time_now == self.videos[i].duration:
+            video.time_now += 1
+            print(video.time_now, end=" ")
+            if video.time_now == video.duration:
                 print('Конец видео')
                 watch_finished = True
         if watch_finished:
-            self.videos[i].time_now = 0
+            video.time_now = 0
 
     def contains(self, item):
         if not isinstance(item, str):
             item = item.title
-        for i in range(len(self.videos)):
-            if item == self.videos[i].title:
-                return i
+        for video in self.videos:
+            if item == video.title:
+                return video
         return None
 
     def __str__(self):
-        return f'Загружено видео: {UrTube.total_video}, пользователей: {UrTube.total_users}'
+        return f'Всего видео: {UrTube.total_video}, пользователей: {UrTube.total_users}'

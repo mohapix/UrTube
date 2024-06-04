@@ -3,9 +3,9 @@ from tube import UrTube
 
 
 def watch_video(title, time_start=0, speed=1):
-    index = ur.contains(title)
-    if index or index == 0:
-        ur.watch_video(index, time_start, speed)
+    video = ur.contains(title)
+    if video:
+        ur.watch_video(video, time_start, speed)
         return
     print('Видео не найдено')
 
@@ -19,8 +19,7 @@ v3 = Video('Как сделать лучший пирог?', 100)
 # Добавление видео
 print(ur.show_all_videos())
 ur.add(v1, v2)
-ur.add(v0, v3)
-ur.add(v0, v1, v2)
+ur.add(v0, v3, v1)
 
 # Удаление видео
 ur.del_videos(v0, v3, 'Программирование на Python')
