@@ -44,7 +44,7 @@ print(ur.current_user)
 # Проверка логина и выхода
 ur.log_in('vasya_pupkin', 'F8098FM8fjm9jmi')
 ur.log_out()
-ur.log_in('urban_pythonist', 'iScX4vIJClb9YQavjAgF')
+ur.log_in('vasya_pupkin', 'lolkekcheburek')
 
 # Попытка воспроизведения несуществующего видео
 watch_video('Лучший язык программирования 2024 года!')

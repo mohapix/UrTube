@@ -14,9 +14,8 @@ class UrTube:
         self.current_user = None
 
     def log_in(self, login, password):
-        user_check = User(login, password, False)
+        user_check = User(login, password, None)
         if self.current_user and user_check == self.current_user:
-            del user_check
             return
         for i in range(len(self.users)):
             if user_check == self.users[i]:
@@ -24,9 +23,7 @@ class UrTube:
                     self.log_out()
                 self.current_user = self.users[i]
                 print(f'Привет, {self.current_user.nickname}')
-                del user_check
                 return
-        del user_check
         print(f'Неверное имя пользователя или пароль')
 
     def register(self, nickname, password, age):
@@ -35,12 +32,11 @@ class UrTube:
                 if nickname == self.users[i].nickname:
                     print(f'Пользователь {nickname} уже существует')
                     return
-        if self.current_user:
-            self.log_out()
-        self.current_user = User(nickname, password, age)
+        new_user = User(nickname, password, age)
         UrTube.total_users += 1
-        self.users.append(self.current_user)
+        self.users.append(new_user)
         print(f'Пользователь {nickname} успешно зарегистрирован')
+        self.log_in(nickname, password)
 
     def log_out(self, msg=True):
         nickname = self.current_user.nickname
@@ -79,10 +75,11 @@ class UrTube:
 
     def get_videos(self, key_word=None):
         titles_list = []
+        if not key_word:
+            titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos))
+            return titles_list
         for i in range(len(self.videos)):
-            if not key_word:
-                titles_list.append(self.videos[i].title)
-            elif key_word.lower() in self.videos[i].title.lower():
+            if key_word.lower() in self.videos[i].title.lower():
                 titles_list.append(self.videos[i].title)
         if len(titles_list) == 0:
             return f'Видео не найдено'
