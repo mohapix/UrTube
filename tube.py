@@ -43,13 +43,21 @@ class UrTube:
         if msg:
             print(f'До свидания, {nickname}')
 
+    def user_access_check(self, video):
+        return video.author == self.current_user
+
     def add(self, *args):
+        if not self.current_user:
+            print('Войдите в аккаунт, чтобы добавить видео')
+            return
         videos_to_add = [*args]
         videos_to_add.reverse()
         n = len(videos_to_add) - 1
         while n >= 0:                                       # метод обратного цикла №1
             if not self.contains(videos_to_add[n]):
-                self.videos.append(videos_to_add.pop(n))
+                video = videos_to_add.pop(n)
+                self.videos.append(video)
+                video.author = self.current_user
                 UrTube.total_video += 1
             n -= 1
         if videos_to_add:
@@ -59,10 +67,16 @@ class UrTube:
         print('Все видео успешно добавлены')
 
     def del_videos(self, *args):
+        if not self.current_user:
+            print('Войдите в аккаунт, чтобы удалить видео')
+            return
         videos_to_del = [*args]
         videos_to_del.reverse()
         for i in range(len(videos_to_del)-1, -1, -1):       # метод обратного цикла №2
             if self.contains(videos_to_del[i]):
+                video = videos_to_del[i]
+                if not self.user_access_check(video):
+                    continue
                 self.videos.remove(videos_to_del.pop(i))
                 UrTube.total_video -= 1
         if videos_to_del:
@@ -89,7 +103,7 @@ class UrTube:
             return f'Нет добавленных видео'
         return f'Список всех видео:\n{self.get_videos()}\n'
 
-    def user_access_check(self, video):
+    def watch_access_check(self, video):
         if not self.current_user:
             print('Войдите в аккаунт, чтобы смотреть видео')
             return False
@@ -103,7 +117,7 @@ class UrTube:
         if not video:
             print('Видео не найдено')
             return
-        elif not self.user_access_check(video):
+        elif not self.watch_access_check(video):
             return
         elif time_now >= video.duration:
             return
