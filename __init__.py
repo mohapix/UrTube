@@ -22,7 +22,7 @@ ur.add(v1, v2)
 ur.add(v0, v3, v1)
 
 # Удаление видео
-ur.del_videos(v0, v3, 'Программирование на Python')
+ur.del_videos(v0, v3)
 
 # Проверка поиска
 print(ur.show_all_videos())

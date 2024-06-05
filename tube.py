@@ -27,11 +27,10 @@ class UrTube:
         print(f'Неверное имя пользователя или пароль')
 
     def register(self, nickname, password, age):
-        if len(self.users):
-            for user in self.users:
-                if nickname == user.nickname:
-                    print(f'Пользователь {nickname} уже существует')
-                    return
+        for user in self.users:
+            if nickname == user.nickname:
+                print(f'Пользователь {nickname} уже существует')
+                return
         new_user = User(nickname, password, age)
         UrTube.total_users += 1
         self.users.append(new_user)
@@ -48,12 +47,12 @@ class UrTube:
         videos_to_add = [*args]
         videos_to_add.reverse()
         n = len(videos_to_add) - 1
-        while n >= 0:
+        while n >= 0:                                       # метод обратного цикла №1
             if not self.contains(videos_to_add[n]):
                 self.videos.append(videos_to_add.pop(n))
                 UrTube.total_video += 1
             n -= 1
-        if len(videos_to_add):
+        if videos_to_add:
             videos_to_add.reverse()
             print(f'Не удалось добавить видео:\n{videos_to_add}\n')
             return
@@ -62,11 +61,11 @@ class UrTube:
     def del_videos(self, *args):
         videos_to_del = [*args]
         videos_to_del.reverse()
-        for i in range(len(videos_to_del)-1, -1, -1):
+        for i in range(len(videos_to_del)-1, -1, -1):       # метод обратного цикла №2
             if self.contains(videos_to_del[i]):
                 self.videos.remove(videos_to_del.pop(i))
                 UrTube.total_video -= 1
-        if len(videos_to_del):
+        if videos_to_del:
             videos_to_del.reverse()
             print(f'Не удалось удалить видео:\n{videos_to_del}\n')
             return
@@ -75,18 +74,19 @@ class UrTube:
     def get_videos(self, key_word=None):
         titles_list = []
         if not key_word:
-            titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos))
+            # titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos)) # метод №1
+            titles_list = [video.title for video in self.videos]                            # метод №2
             return titles_list
         for video in self.videos:
             if key_word.lower() in video.title.lower():
                 titles_list.append(video.title)
-        if not len(titles_list):
+        if not titles_list:
             return f'Видео не найдено'
         return titles_list
 
     def show_all_videos(self):
-        if not len(self.videos):
-            return f'Нет загруженных видео'
+        if not self.videos:
+            return f'Нет добавленных видео'
         return f'Список всех видео:\n{self.get_videos()}\n'
 
     def user_access_check(self, video):
