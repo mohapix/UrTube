@@ -3,11 +3,7 @@ from tube import UrTube
 
 
 def watch_video(title, time_start=0, speed=1):
-    video = ur.contains(title)
-    if video:
-        ur.watch_video(video, time_start, speed)
-        return
-    print('Видео не найдено')
+    ur.watch_video(title, time_start, speed)
 
 
 ur = UrTube()

@@ -98,8 +98,12 @@ class UrTube:
             return False
         return True
 
-    def watch_video(self, video, time_now=0, speed=1):
-        if not self.user_access_check(video):
+    def watch_video(self, title, time_now=0, speed=1):
+        video = self.contains(title)
+        if not video:
+            print('Видео не найдено')
+            return
+        elif not self.user_access_check(video):
             return
         elif time_now >= video.duration:
             return
