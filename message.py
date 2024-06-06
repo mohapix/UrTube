@@ -36,11 +36,11 @@ class Message:
                 self.msg_txt = f'До свидания, {msg_args[0]}'
                 self.msg_log = f'Выход из системы {msg_args[0]}'
             case _:
-                self.msg_txt = f'Сообщение об ошибке!'
-                self.msg_log = self.msg_txt
+                self.msg_txt = ''
+                self.msg_log = f'Сообщение об ошибке!'
         self.log_this()
 
-        if not self.silent or msg_mandatory:
+        if (not self.silent and self.msg_txt) or msg_mandatory:
             print(self.msg_txt)
 
     def watch_video(self, msg_id: int, *args):
@@ -64,12 +64,12 @@ class Message:
                 self.msg_txt = f'Запуск видео: "{msg_args[0]}" с {msg_args[1]} секунды со скоростью х{msg_args[2]}'
                 self.msg_log = self.msg_txt
             case _:
-                self.msg_txt = f'Сообщение об ошибке!'
-                self.msg_log = self.msg_txt
+                self.msg_txt = ''
+                self.msg_log = f'Сообщение об ошибке!'
                 msg_mandatory = False
         self.log_this()
 
-        if not self.silent or msg_mandatory:
+        if (not self.silent and self.msg_txt) or msg_mandatory:
             print(self.msg_txt)
 
     def video_adg(self, msg_id: int, *args):    # adg - add, delete, get
@@ -109,15 +109,15 @@ class Message:
                 self.msg_log = (f'Удалено видео: {msg_args[0].title}, {msg_args[0].duration}, '
                                 f'{msg_args[0].adult_mode}, {msg_args[1]}')
             case _:
-                self.msg_txt = f'Сообщение об ошибке!'
-                self.msg_log = self.msg_txt
+                self.msg_txt = ''
+                self.msg_log = f'Сообщение об ошибке!'
         self.log_this()
 
-        if not self.silent or msg_mandatory:
+        if (not self.silent and self.msg_txt) or msg_mandatory:
             print(self.msg_txt)
 
     def __str__(self):
-        return f'Лог сообщений'
+        return f'Лог активности'
 
     def __repr__(self):
         return self.msg_txt
