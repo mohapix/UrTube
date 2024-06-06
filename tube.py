@@ -79,6 +79,7 @@ class UrTube:
             if self.contains(videos_to_del[i]):
                 video = videos_to_del[i]
                 if not self.user_access_check(video):
+                    self.msg.video_adg(11, video, self.current_user.nickname)
                     continue
                 self.videos.remove(videos_to_del.pop(i))
                 video.author = None
@@ -96,17 +97,18 @@ class UrTube:
             # titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos)) # метод №1
             titles_list = [video.title for video in self.videos]                            # метод №2
             return titles_list
+        result = f'Запрос: содержит "{key_word}"\n'
         for video in self.videos:
             if key_word.lower() in video.title.lower():
                 titles_list.append(video.title)
         if not titles_list:
-            return f'Видео не найдено'
-        return titles_list
+            return result + f'Результат запроса. Видео не найдено'
+        return result + f'Результат запроса. Найдено {len(titles_list)} видео:\n{titles_list}'
 
     def show_all_videos(self):
         if not self.videos:
             return f'Нет добавленных видео'
-        return f'Список всех видео:\n{self.get_videos()}\n'
+        return f'Список всех видео:\n{self.get_videos()}'
 
     def watch_access_check(self, video):
         if not self.current_user:
@@ -125,6 +127,7 @@ class UrTube:
         elif not self.watch_access_check(video):
             return
         elif time_now >= video.duration:
+            self.msg.watch_video(6, video, time_now)
             return
         match speed:
             case 0.25:
