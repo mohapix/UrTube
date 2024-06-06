@@ -1,4 +1,5 @@
 from auth import User
+from message import Message
 from time import sleep
 
 
@@ -12,8 +13,9 @@ class UrTube:
         self.users = []
         self.videos = []
         self.current_user = None
+        self.msg = Message(silent=True)
 
-    def log_in(self, login, password):
+    def log_in(self, login: str, password: str):
         user_check = User(login, password, None)
         if self.current_user and user_check == self.current_user:
             return
@@ -22,35 +24,34 @@ class UrTube:
                 if self.current_user:
                     self.log_out()
                 self.current_user = user
-                print(f'Привет, {self.current_user.nickname}')
+                self.current_user.msg.user(4, self.current_user.nickname)
                 return
-        print(f'Неверное имя пользователя или пароль')
+        self.msg.user(3, login)
 
-    def register(self, nickname, password, age):
+    def register(self, nickname: str, password: str, age: int, silent: bool = False):
         for user in self.users:
             if nickname == user.nickname:
-                print(f'Пользователь {nickname} уже существует')
+                self.msg.user(1, nickname)
                 return
-        new_user = User(nickname, password, age)
+        new_user = User(nickname, password, age, silent)
         UrTube.total_users += 1
         self.users.append(new_user)
-        print(f'Пользователь {nickname} успешно зарегистрирован')
+        self.msg.user(2, nickname)
         self.log_in(nickname, password)
 
-    def log_out(self, msg=True):
-        nickname = self.current_user.nickname
+    def log_out(self):
+        self.current_user.msg.user(5, self.current_user.nickname)
         self.current_user = None
-        if msg:
-            print(f'До свидания, {nickname}')
 
     def user_access_check(self, video):
         return video.author == self.current_user
 
     def add(self, *args):
-        if not self.current_user:
-            print('Войдите в аккаунт, чтобы добавить видео')
-            return
         videos_to_add = [*args]
+        if not self.current_user:
+            self.msg.video_adg(1, *videos_to_add)
+            return
+        self.current_user.msg.video_adg(2, *videos_to_add)
         videos_to_add.reverse()
         n = len(videos_to_add) - 1
         while n >= 0:                                       # метод обратного цикла №1
@@ -59,18 +60,20 @@ class UrTube:
                 self.videos.append(video)
                 video.author = self.current_user
                 UrTube.total_video += 1
+                self.msg.video_adg(9, video, self.current_user.nickname)
             n -= 1
         if videos_to_add:
             videos_to_add.reverse()
-            print(f'Не удалось добавить видео:\n{videos_to_add}\n')
+            self.current_user.msg.video_adg(4, *videos_to_add)
             return
-        print('Все видео успешно добавлены')
+        self.current_user.msg.video_adg(3)
 
     def del_videos(self, *args):
-        if not self.current_user:
-            print('Войдите в аккаунт, чтобы удалить видео')
-            return
         videos_to_del = [*args]
+        if not self.current_user:
+            self.msg.video_adg(5, *videos_to_del)
+            return
+        self.current_user.msg.video_adg(6, *videos_to_del)
         videos_to_del.reverse()
         for i in range(len(videos_to_del)-1, -1, -1):       # метод обратного цикла №2
             if self.contains(videos_to_del[i]):
@@ -78,14 +81,16 @@ class UrTube:
                 if not self.user_access_check(video):
                     continue
                 self.videos.remove(videos_to_del.pop(i))
+                video.author = None
                 UrTube.total_video -= 1
+                self.msg.video_adg(10, video, self.current_user.nickname)
         if videos_to_del:
             videos_to_del.reverse()
-            print(f'Не удалось удалить видео:\n{videos_to_del}\n')
+            self.current_user.msg.video_adg(8, *videos_to_del)
             return
-        print('Все видео успешно удалены')
+        self.current_user.msg.video_adg(7)
 
-    def get_videos(self, key_word=None):
+    def get_videos(self, key_word: str or None = None):
         titles_list = []
         if not key_word:
             # titles_list = list(map(lambda titles: getattr(titles, 'title'), self.videos)) # метод №1
@@ -105,17 +110,17 @@ class UrTube:
 
     def watch_access_check(self, video):
         if not self.current_user:
-            print('Войдите в аккаунт, чтобы смотреть видео')
+            self.msg.watch_video(2, video.title)
             return False
         elif video.adult_mode and self.current_user.age < 18:
-            print('Вам нет 18 лет, пожалуйста, покиньте страницу')
+            self.msg.watch_video(3, video.title)
             return False
         return True
 
-    def watch_video(self, title, time_now=0, speed=1):
+    def watch_video(self, title: str, time_now: int = 0, speed: int = 1):
         video = self.contains(title)
         if not video:
-            print('Видео не найдено')
+            self.msg.watch_video(1, title)
             return
         elif not self.watch_access_check(video):
             return
@@ -136,13 +141,13 @@ class UrTube:
                 sec = 1
         video.time_now = time_now
         watch_finished = False
-        print(f"Запуск видео: '{video.title}' с {time_now} секунды со скоростью х{speed}")
+        self.current_user.msg.watch_video(5, video.title, time_now, speed)
         while video.time_now < video.duration:
             sleep(sec)
             video.time_now += 1
             print(video.time_now, end=" ")
             if video.time_now == video.duration:
-                print('Конец видео')
+                self.current_user.msg.watch_video(4, video.title)
                 watch_finished = True
         if watch_finished:
             video.time_now = 0
@@ -155,5 +160,5 @@ class UrTube:
                 return video
         return None
 
-    def __str__(self):
+    def __repr__(self):
         return f'Всего видео: {UrTube.total_video}, пользователей: {UrTube.total_users}'

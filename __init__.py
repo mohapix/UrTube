@@ -17,9 +17,9 @@ v5 = Video('Python для чайников', 50)
 # Добавление видео
 print(ur.show_all_videos())
 ur.add(v1, v2)
-ur.register('PetyaPetrov', 'qwerty', 18)
+ur.register('PetyaPetrov', 'qwerty', 18, True)
 ur.add(v1, v2)
-ur.register('Alex Pushkin', 'wasd', 16)
+ur.register('Alex Pushkin', 'wasd', 16, True)
 ur.add(v0, v3, v1, v4, v5)
 ur.log_out()
 
